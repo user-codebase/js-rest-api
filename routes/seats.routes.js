@@ -12,8 +12,40 @@ router.get('/:id', (req, res) => {
   res.json(item || {});
 });
 
+// router.post('/', (req, res) => {
+//   db.seats.push(req.body);
+//   res.json({ message: 'OK' });
+// });
+
 router.post('/', (req, res) => {
-  db.seats.push(req.body);
+  const { day, seat, client, email } = req.body;
+
+  if (!day || !seat || !client || !email) {
+    return res.status(400).json({
+      message: 'Missing data'
+    });
+  }
+
+  const isTaken = db.seats.some(
+    item => item.day === day && item.seat === seat
+  );
+
+  if (isTaken) {
+    return res.status(409).json({
+      message: 'The slot is already taken...'
+    });
+  }
+
+  const newSeat = {
+    id: db.seats.length + 1,
+    day,
+    seat,
+    client,
+    email
+  };
+
+  db.seats.push(newSeat);
+
   res.json({ message: 'OK' });
 });
 
