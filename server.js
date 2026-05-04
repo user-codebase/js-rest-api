@@ -1,12 +1,36 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const http = require('http');
+const mongoose = require('mongoose');
+const { Server } = require("socket.io");
 
 const app = express();
+const server = http.createServer(app);
+
+const io = new Server(server, {
+  cors: {
+    origin: "*"
+  }
+});
+
+io.on("connection", (socket) => {
+  console.log("New socket!");
+
+  socket.emit("test", "hello from server");
+});
 
 app.use(cors());
 app.use(express.json());
 
+app.use((req, res, next) => {
+  req.io = io;
+  next();
+});
+
+mongoose.connect('mongodb://localhost:27017/NewWaveDB')
+  .then(() => console.log('MongoDB connected'))
+  .catch(err => console.log(err));
 
 app.use('/api/testimonials', require('./routes/testimonials.routes'));
 app.use('/api/concerts', require('./routes/concerts.routes'));
@@ -30,6 +54,6 @@ app.use('/api', (req, res) => {
 });
 
 
-app.listen(process.env.PORT || 8000, () => {
+server.listen(process.env.PORT || 8000, () => {
   console.log('Server is running');
 });
