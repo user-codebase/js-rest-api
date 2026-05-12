@@ -33,7 +33,7 @@ const SeatChooser = ({ chosenDay, chosenSeat, updateSeat }) => {
     });
 
     return () => socket.disconnect();
-  }, );
+  }, [dispatch]);
   
   // useEffect(() => {
   //   dispatch(loadSeatsRequest());
