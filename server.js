@@ -4,6 +4,7 @@ const path = require('path');
 const http = require('http');
 const mongoose = require('mongoose');
 const { Server } = require("socket.io");
+require('dotenv').config();
 
 const app = express();
 const server = http.createServer(app);
@@ -28,7 +29,8 @@ app.use((req, res, next) => {
   next();
 });
 
-mongoose.connect('mongodb://localhost:27017/NewWaveDB')
+// mongoose.connect('mongodb://localhost:27017/NewWaveDB')
+mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.log(err));
 
